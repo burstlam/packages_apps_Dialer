@@ -133,7 +133,7 @@ public class DialpadFragment extends Fragment
      * isn't enclosed by the container.
      */
     private View mDigitsContainer;
-    private EditText mDigits;
+    private static EditText mDigits;
 
     private EditText mRecipients;
     private View mDialpadStub;
@@ -1938,5 +1938,9 @@ public class DialpadFragment extends Fragment
             startActivity(intent);
             mClearDigitsOnStop = true;
         }
+    }
+
+    public static int getDigitsCurrentLength() {
+        return mDigits.length();
     }
 }
