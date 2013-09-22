@@ -106,7 +106,7 @@ public class SmartDialController {
     private final List<LinearLayout> mViewOverlays = Lists.newArrayList();
     private final List<LinearLayout> mViews = Lists.newArrayList();
 
-    private static final int NUM_SUGGESTIONS = 6;
+    private static final int NUM_SUGGESTIONS = 8;
 
     private static final long ANIM_DURATION = 200;
 
