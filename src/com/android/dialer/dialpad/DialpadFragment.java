@@ -158,7 +158,6 @@ public class DialpadFragment extends Fragment
     private View mDialButton;
     private ListView mDialpadChooser;
     private DialpadChooserAdapter mDialpadChooserAdapter;
-    private View mSearchButton;
 
     /** Will be set only if the view has the smart dialing section. */
     private RelativeLayout mSmartDialContainer;
@@ -384,13 +383,11 @@ public class DialpadFragment extends Fragment
 
         mDigitsContainer = fragmentView.findViewById(R.id.digits_container);
         mDigits = (EditText) fragmentView.findViewById(R.id.digits);
-        mSearchButton = fragmentView.findViewById(R.id.searchButton);
         mDigits.setKeyListener(UnicodeDialerKeyListener.INSTANCE);
         mDigits.setOnClickListener(this);
         mDigits.setOnKeyListener(this);
         mDigits.setOnLongClickListener(this);
         mDigits.addTextChangedListener(this);
-        mSearchButton.setOnClickListener(this);
         PhoneNumberFormatter.setPhoneNumberFormattingTextWatcher(getActivity(), mDigits);
         // Check for the presence of the keypad
         View oneButton = fragmentView.findViewById(R.id.one);
@@ -403,6 +400,13 @@ public class DialpadFragment extends Fragment
         int cellCount = dm.widthPixels / minCellSize;
         int fakeMenuItemWidth = dm.widthPixels / cellCount;
         mDialButtonContainer = fragmentView.findViewById(R.id.dialButtonContainer);
+        // If in portrait, add padding to the dial button since we need space for the
+        // search and menu/overflow buttons.
+        if (mDialButtonContainer != null && !OrientationUtil.isLandscape(this.getActivity())) {
+            mDialButtonContainer.setPadding(
+                    fakeMenuItemWidth, mDialButtonContainer.getPaddingTop(),
+                    fakeMenuItemWidth, mDialButtonContainer.getPaddingBottom());
+        }
         mDialButton = fragmentView.findViewById(R.id.dialButton);
         if (r.getBoolean(R.bool.config_show_onscreen_dial_button)) {
             mDialButton.setOnClickListener(this);
@@ -1005,10 +1009,6 @@ public class DialpadFragment extends Fragment
                     mDigits.setCursorVisible(true);
                 }
                 return;
-            }
-            case R.id.searchButton: {
-                DialtactsActivity mDialtactsActivity = (DialtactsActivity) getActivity();
-                mDialtactsActivity.onClick(view);
             }
             default: {
                 Log.wtf(TAG, "Unexpected onClick() event from: " + view);
