@@ -38,9 +38,12 @@ import android.widget.TextView;
 
 import com.android.dialer.R;
 import com.android.dialer.util.HanziToPinyin;
+import com.android.dialer.dialpad.SmartDialMatchPosition;
+import com.android.dialer.dialpad.SmartDialNameMatcher;
 
 import com.google.common.collect.Lists;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -362,33 +365,116 @@ public class SmartDialController {
                 if (p.start < p.end) {
                     String[] words = HanziToPinyin.getInstance().getSplitFullWordsString(displayName.toString());
                     boolean chineseWords = HanziToPinyin.getInstance().isChineseWords(displayName.toString());
+                    boolean firstChineseWords = HanziToPinyin.getInstance().isFristChineseWords(displayName.toString());
                     int digitsLength = DialpadFragment.getDigitsCurrentLength();
-                    if (HanziToPinyin.getInstance().getFullWordsString(displayName.toString()).length() != displayName.length() && chineseWords && p.end > displayName.length()) {
-                        if (words != null) {
-                            int lengthSum = 0;
-                            for (int i = 0; i < words.length; i++ ) {
-                                lengthSum = lengthSum + words[i].length();
-                                if (p.end <= lengthSum) {
-                                    p.end = i + 1;
-                                    break;
+                    int tmpEnd = 0;
+                    int displayLength = displayName.length();
+                    if (!chineseWords) {
+                        // Not Chinese Words
+                        p.start = 0;
+                        p.end --;
+                        if (digitsLength == displayName.toString().replace(" ", "").length())
+                            p.end = displayLength;
+                    } else {
+                        if (words.length < displayLength) {
+                            tmpEnd = p.end - p.start;
+                            if (firstChineseWords) {
+                                if (checkMatcher(words[words.length - 1], DialpadFragment.getDigitsText())) {
+                                    p.start = words[0].length();
+                                    p.end = p.start + tmpEnd;
+                                    if (p.end > displayLength) {
+                                        p.start = words.length - 1;
+                                        p.end = digitsLength + p.start;
+                                    }
+                                } else {
+                                    if (words != null) {
+                                        int lengthSum = 0;
+                                        for (int i = 0; i < words.length; i++ ) {
+                                            lengthSum = lengthSum + words[i].length();
+                                            if (p.end <= lengthSum) {
+                                                p.end = i + 1;
+                                                break;
+                                            }
+                                        }
+                                        if (p.end > displayLength) {
+                                            lengthSum = 0;
+                                            for (int i = 0; i < words.length - 1; i++) {
+                                                lengthSum = lengthSum + words[i].length();
+                                            }
+                                            p.end = words.length - 1 + digitsLength - lengthSum;
+                                        }
+                                    }
+                                }
+                            } else {
+                                if (!checkMatcher(words[0], DialpadFragment.getDigitsText())) {
+                                    p.start = words.length - words[words.length - 1].length();
+                                    if (p.end > displayLength && p.start != 0) {
+                                        p.start = words.length - 1;
+                                        p.end = digitsLength + p.start;
+                                    } else {
+                                        p.start = words[0].length();
+                                        if (words != null) {
+                                            for (int i = 1; i < words.length; i++) {
+                                                if (checkMatcher(words[i],DialpadFragment.getDigitsText())) {
+                                                    p.end = p.start + i;
+                                                }
+                                            }
+                                        }
+                                        if (p.end < p.start) {
+                                            p.end = p.start + p.end;
+                                        }
+                                    }
+                                }
+                            }
+                        } else if (HanziToPinyin.getInstance().getFullWordsString(displayName.toString()).length() != displayLength && p.end > displayLength) {
+                            if (words != null) {
+                                int lengthSum = 0;
+                                for (int i = 0; i < words.length; i++ ) {
+                                    lengthSum = lengthSum + words[i].length();
+                                    if (p.end <= lengthSum) {
+                                        p.end = i + 1;
+                                        break;
+                                    }
+                                }
+                            }
+                        } else if (words.length == displayLength) {
+                            // All PinYin Words
+                            if (digitsLength <= words[0].length()) {
+                                if (words != null) {
+                                    int lengthSum = 0;
+                                    for (int i = 0; i < words.length; i++ ) {
+                                        lengthSum = lengthSum + words[i].length();
+                                        tmpEnd = p.end;
+                                        if (p.end <= lengthSum) {
+                                            p.end = i + 1;
+                                            if(tmpEnd >= p.end && tmpEnd <= displayLength && !checkMatcher(words[0].toString(),DialpadFragment.getDigitsText()))
+                                                p.end = tmpEnd ;
+                                            break;
+                                        }
+                                    }
+                                }
+                            } else if(p.end > displayLength || digitsLength == 3 && checkMatcher(words[0].toString(),DialpadFragment.getDigitsText().substring(0, 2))) {
+                                if (words != null) {
+                                    int lengthSum = 0;
+                                    for (int i = 0; i < words.length; i++ ) {
+                                        lengthSum = lengthSum + words[i].length();
+                                        if (p.end <= lengthSum) {
+                                            p.end = i + 1;
+                                            break;
+                                        }
+                                    }
                                 }
                             }
                         }
                     }
-                    if (p.end > displayName.length()) {
-                        p.end = displayName.length();
+                    if (p.end > displayLength) {
+                        p.end = displayLength;
                     }
-                    if (p.start > displayName.length()) {
-                        if (digitsLength <= displayName.length()) {
+                    if (p.start > displayLength) {
+                        if (digitsLength <= displayLength) {
                             p.start = 0;
                             p.end = digitsLength;
                         }
-                    }
-                    if (!chineseWords) {
-                        p.start = 0;
-                        p.end --;
-                        if (digitsLength == displayName.toString().replace(" ", "").length())
-                            p.end = displayName.length();
                     }
                     // Create a new ForegroundColorSpan for each section of the name to highlight,
                     // otherwise multiple highlights won't work.
@@ -414,5 +500,14 @@ public class SmartDialController {
         }
         view.setEnabled(true);
         view.setTag(item);
+    }
+
+    public boolean checkMatcher (String displayName, String query) {
+        final SmartDialNameMatcher matcher = new SmartDialNameMatcher(query);
+        final ArrayList<SmartDialMatchPosition> matchPositions =
+                new ArrayList<SmartDialMatchPosition>();
+        final boolean matches = matcher.matchesCombination(
+                displayName, query, matchPositions);
+        return matches;
     }
 }
