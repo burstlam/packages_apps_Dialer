@@ -44,6 +44,7 @@ import android.os.RemoteException;
 import android.os.ServiceManager;
 import android.os.SystemProperties;
 import android.preference.PreferenceManager;
+import android.provider.ContactsContract;
 import android.provider.ContactsContract.Contacts;
 import android.provider.Contacts.People;
 import android.provider.Contacts.Phones;
@@ -845,7 +846,7 @@ public class DialpadFragment extends Fragment
         stopWatch.stopAndLog(TAG, 50);
         
         try {
-	        if(Settings.System.getInt(getActivity().getContentResolver(),
+	        if (Settings.System.getInt(getActivity().getContentResolver(),
                     Settings.System.DIALER_DIRECT_CALL, 0) == 0 ? false : true) {
 	            SensorOrientationY = 0;
 	            SensorProximity = 0;
@@ -1256,9 +1257,9 @@ public class DialpadFragment extends Fragment
                 final Context mContext= getActivity();
                 speedDialPrefs = mContext.getSharedPreferences(SPEED_DIAL, Context.MODE_PRIVATE);
                 String value = speedDialPrefs.getString(SpeedDialPreferenceActivity.SPEED_DIAL + num, null);
-                if(value == null) {
+                if (value == null) {
                         boolean remindMe = speedDialPrefs.getBoolean(PREF_DONT_REMIND_ME_KEY, false);
-                        if(!remindMe) {
+                        if (!remindMe) {
                                 LinearLayout viewLayout = new LinearLayout(mContext);
                                 viewLayout.setOrientation(LinearLayout.VERTICAL);
                                 TextView alertTextView = new TextView(mContext);
@@ -1883,18 +1884,18 @@ public class DialpadFragment extends Fragment
                 updateDialString(WAIT);
                 return true;
             case R.id.menu_ipcall:
-                    Context context = getActivity();
-                    if(TextUtils.isEmpty(IPCallPreferenceActivity.getIPCallPrefix(context))) {
+                Context context = getActivity();
+                if (TextUtils.isEmpty(IPCallPreferenceActivity.getIPCallPrefix(context))) {
                     IPCallDialogFragment.show(this);
-                    }
-                    else {
+                }
+                else {
                     dialIPCallButtonPressed();
-                    }
+                }
                 return true;
             case R.id.menu_speeddial:
-                                Intent intent = new Intent(getActivity(), SpeedDialPreferenceActivity.class);
-                                startActivity(intent);
-                    return true;
+                Intent intent = new Intent(getActivity(), SpeedDialPreferenceActivity.class);
+                startActivity(intent);
+                return true;
             default:
                 return false;
         }
