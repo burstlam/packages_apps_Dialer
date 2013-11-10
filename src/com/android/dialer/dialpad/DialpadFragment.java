@@ -886,9 +886,9 @@ public class DialpadFragment extends Fragment
                 registerSensorListener(mAccelerometer);
                 registerSensorListener(mMagnetometer);
             }
-	    } catch (Exception e) {
-	        Log.w("ERROR", e.toString());
-	    }
+        } catch (Exception e) {
+            Log.w("ERROR", e.toString());
+        }
     }
 
     @Override
