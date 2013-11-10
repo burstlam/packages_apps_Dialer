@@ -380,24 +380,24 @@ public class DialpadFragment extends Fragment
     public void onSensorChanged(SensorEvent event) {
 
 	    switch (event.sensor.getType()) {
-		    case Sensor.TYPE_ORIENTATION:
-			SensorOrientationY = (int) event.values[SensorManager.DATA_Y];
-			break;
-		    case Sensor.TYPE_PROXIMITY:
-			int currentProx = (int) event.values[0];
-			if (initProx) {
-			    SensorProximity = currentProx;
-			    initProx = false;
-			} else {
-			    if( SensorProximity > 0 && currentProx <= 3){
-			        proxChanged = true;
-			    }
-			}
-			SensorProximity = currentProx;
-			break;
-	        }
+            case Sensor.TYPE_ORIENTATION:
+                SensorOrientationY = (int) event.values[1];
+                break;
+            case Sensor.TYPE_PROXIMITY:
+                int currentProx = (int) event.values[0];
+                if (initProx) {
+                    SensorProximity = currentProx;
+                    initProx = false;
+                } else {
+                    if (SensorProximity > 0 && currentProx <= 5){
+                        proxChanged = true;
+                    }
+                }
+                SensorProximity = currentProx;
+                break;
+            }
 
-	    if (rightOrientation(SensorOrientationY) && SensorProximity <= 3 && proxChanged ) {
+	    if (rightOrientation(SensorOrientationY) && SensorProximity <= 5 && proxChanged ) {
 	        if (isDigitsEmpty() == false) {
 	            // unregister Listener to don't let the onSesorChanged run the
 	            // whole time
@@ -846,20 +846,20 @@ public class DialpadFragment extends Fragment
         stopWatch.stopAndLog(TAG, 50);
         
         try {
-	        if (Settings.System.getInt(getActivity().getContentResolver(),
+            if (Settings.System.getInt(getActivity().getContentResolver(),
                     Settings.System.DIALER_DIRECT_CALL, 0) == 0 ? false : true) {
-	            SensorOrientationY = 0;
-	            SensorProximity = 0;
-	            proxChanged = false;
-	            initProx = true;
-	            mSensorManager = (SensorManager) getActivity().getSystemService(Context.SENSOR_SERVICE);
-	            mSensorManager.registerListener(this,
-	                        mSensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION),
-	                        SensorManager.SENSOR_DELAY_UI);
-	            mSensorManager.registerListener(this,
-	                        mSensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY),
-	                        SensorManager.SENSOR_DELAY_UI);
-	        }
+                SensorOrientationY = 0;
+                SensorProximity = 0;
+                proxChanged = false;
+                initProx = true;
+                mSensorManager = (SensorManager) getActivity().getSystemService(Context.SENSOR_SERVICE);
+                mSensorManager.registerListener(this,
+                    mSensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION),
+                    SensorManager.SENSOR_DELAY_UI);
+                mSensorManager.registerListener(this,
+                    mSensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY),
+                    SensorManager.SENSOR_DELAY_UI);
+            }
 	    } catch (Exception e) {
 	        Log.w("ERROR", e.toString());
 	    }
@@ -889,12 +889,12 @@ public class DialpadFragment extends Fragment
         SpecialCharSequenceMgr.cleanup();
 
 	    try {
-	        if(Settings.System.getInt(getActivity().getContentResolver(),
-                    Settings.System.DIALER_DIRECT_CALL, 0) ==0 ? false : true) {
+	        if (Settings.System.getInt(getActivity().getContentResolver(),
+                    Settings.System.DIALER_DIRECT_CALL, 0) == 0 ? false : true) {
 	            mSensorManager.unregisterListener(this,
-	                        mSensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION));
+                    mSensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION));
 	            mSensorManager.unregisterListener(this,
-	                        mSensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY));
+                    mSensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY));
 	        }
 	    } catch (Exception e) {
 	        Log.w("ERROR", e.toString());
