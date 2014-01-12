@@ -318,6 +318,14 @@
                   android:process="com.android.incallui">
         </activity>
 
+        <activity android:name=".InCallCardActivity"
+                  android:label="@string/inCallLabel"
+                  android:excludeFromRecents="true"
+                  android:launchMode="singleInstance"
+                  android:configChanges="keyboardHidden"
+                  android:exported="false">
+        </activity>
+
         <service android:name="com.android.incallui.CallHandlerService"
                  android:process="com.android.incallui"
                  android:permission="android.permission.BIND_CALL_SERVICE">
