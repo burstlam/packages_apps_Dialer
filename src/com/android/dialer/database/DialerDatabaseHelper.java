@@ -18,6 +18,7 @@ package com.android.dialer.database;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.res.Resources;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.DatabaseUtils;
@@ -25,7 +26,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteStatement;
-import android.mokee.util.MoKeeUtils;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.provider.BaseColumns;
@@ -672,6 +672,15 @@ public class DialerDatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
+    public static boolean isChineseLanguage() {
+       Resources res = Resources.getSystem();
+       if (res.getConfiguration().locale.getCountry().equals("CN") || res.getConfiguration().locale.getCountry().equals("TW")) {
+            return true;
+       } else {
+            return false;
+       }
+    }
+
     /**
      * Inserts prefixes of contact names to the prefix table.
      *
@@ -816,7 +825,7 @@ public class DialerDatabaseHelper extends SQLiteOpenHelper {
             if (nameCursor != null) {
                 try {
                     /** Inserts prefixes of names into the prefix table.*/
-                    insertNamePrefixes(db, nameCursor, MoKeeUtils.isChineseLanguage());
+                    insertNamePrefixes(db, nameCursor, isChineseLanguage());
                     if (DEBUG) {
                         stopWatch.lap("Finished building the name prefix table");
                     }
