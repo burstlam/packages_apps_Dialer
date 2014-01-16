@@ -119,7 +119,7 @@ public class DialpadFragment extends Fragment
         View.OnLongClickListener, View.OnKeyListener,
         AdapterView.OnItemClickListener, TextWatcher,
         PopupMenu.OnMenuItemClickListener,
-        DialpadImageButton.OnPressedListener {
+        DialpadKeyButton.OnPressedListener {
 
     private static final String TAG = DialpadFragment.class.getSimpleName();
 
