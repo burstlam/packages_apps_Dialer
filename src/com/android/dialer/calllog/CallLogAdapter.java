@@ -533,7 +533,7 @@ public class CallLogAdapter extends GroupingListAdapter
     }
 
     @VisibleForTesting
-    protected void enqueueRequest(String number, String countryIso, ContactInfo callLogInfo,
+    void enqueueRequest(String number, String countryIso, ContactInfo callLogInfo,
             boolean immediate) {
         mAdapterHelper.enqueueRequest(number, countryIso, callLogInfo, immediate);
     }
