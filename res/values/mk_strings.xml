@@ -37,4 +37,6 @@
     <!-- toast tips -->
     <string name="toast_no_google_search">Please install Google Search</string>
 
+    <!-- Forward lookup -->
+    <string name="nearby_places">Nearby places</string>
 </resources>
