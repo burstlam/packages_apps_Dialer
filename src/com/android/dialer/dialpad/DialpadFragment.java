@@ -382,7 +382,7 @@ public class DialpadFragment extends Fragment
 
     private void registerSensorListener(Sensor sensor) {
         if (sensor != null)
-            mSensorManager.registerListener(mSensorListener, sensor, SensorManager.SENSOR_DELAY_GAME);
+            mSensorManager.registerListener(mSensorListener, sensor, SensorManager.SENSOR_DELAY_UI);
     }
 
     private void unregisterSensorListener(Sensor sensor) {
@@ -403,7 +403,7 @@ public class DialpadFragment extends Fragment
                     SensorProximity = currentProx;
                     initProx = false;
                 } else {
-                    if( SensorProximity > 0 && currentProx <= 5){
+                    if( SensorProximity > 0 && currentProx <= 3){
                         proxChanged = true;
                     }
                 }
@@ -418,12 +418,12 @@ public class DialpadFragment extends Fragment
                 float I[] = new float[9];
                 boolean success = SensorManager.getRotationMatrix(R, I, mGravity, mGeomagnetic);
                 if (success) {
-                    float orientation[] = new float[5];
+                    float orientation[] = new float[3];
                     SensorManager.getOrientation(R, orientation);
                     SensorOrientationY = (int) (orientation[1] * 180f / Math.PI);
                 }
             }
-            if (rightOrientation(SensorOrientationY) && SensorProximity <= 5 && proxChanged ) {
+            if (rightOrientation(SensorOrientationY) && SensorProximity <= 3 && proxChanged ) {
                 if (isDigitsEmpty() == false) {
                     // unregister Listener to don't let the onSesorChanged run the
                     // whole time
