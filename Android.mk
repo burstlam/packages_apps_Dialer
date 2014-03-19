@@ -28,6 +28,7 @@ LOCAL_STATIC_JAVA_LIBRARIES := \
     android-support-v13 \
     android-support-v4 \
     android-ex-variablespeed \
+    pinyin \
 
 LOCAL_REQUIRED_MODULES := libvariablespeed
 
@@ -38,6 +39,13 @@ LOCAL_PRIVILEGED_MODULE := true
 LOCAL_PROGUARD_FLAG_FILES := proguard.flags $(incallui_dir)/proguard.flags
 
 include $(BUILD_PACKAGE)
+
+# include pinyin lib
+include $(CLEAR_VARS)
+
+LOCAL_PREBUILT_STATIC_JAVA_LIBRARIES := pinyin:libs/pinyin4android.jar
+
+include $(BUILD_MULTI_PREBUILT)
 
 # Use the following include to make our test apk.
 include $(call all-makefiles-under,$(LOCAL_PATH))
